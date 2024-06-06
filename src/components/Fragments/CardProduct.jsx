@@ -40,7 +40,7 @@ const Footer = (props) => {
   return (
     <div className="flex items-center justify-between px-5 pb-5">
       <span className="text-xl font-bold text-white">Rp. {price}</span>
-      <Button classname="bg-blue-600 text-white">Add To Cart</Button>
+      <Button classname="bg-blue-600 text-white" onclick={() => {}} type="button">Add To Cart</Button>
     </div>
   )
 }
