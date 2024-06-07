@@ -1,7 +1,8 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import CardProduct from "../components/Fragments/CardProduct";
 import Button from "../components/Elements/Button";
 import CardCart from "../components/Fragments/CardCart";
+import CardTotalPrice from "../components/Fragments/CardTotalPrice";
 
 const products = [
   {
@@ -30,12 +31,25 @@ const products = [
 const email = localStorage.getItem('email')
 
 const ProductsPage = () => {
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      qty: 1
+  const [cart, setCart] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    setCart(JSON.parse(localStorage.getItem('cart')) || [])
+  }, [])
+
+  useEffect(() => {
+    let sum = 0;
+    if (cart.length !== 0) {      
+      sum = cart.reduce((acc, item) => {
+        const product = products.find((product) => product.id === item.id)
+        return acc + product.price * item.qty
+      }, 0);
     }
-  ]);
+
+    setTotal(sum)
+    localStorage.setItem('cart', JSON.stringify(cart))
+  }, [cart])
 
   const handleLogout = () => {
     localStorage.removeItem('email')
@@ -79,11 +93,11 @@ const ProductsPage = () => {
           ))}
         </div>
         <div className="w-2/6">
-          {/* <h1 className="text-3xl font-bold text-blue-600">Cart</h1> */}
           {cart.map((item) => {
             const product = products.find((product) => product.id === item.id)
             return <CardCart key={item.id} image={product.image} name={product.name} price={product.price * item.qty} qty={item.qty} onRemoveCart={handleRemoveFromCart} id={product.id}/>
           })}
+          <CardTotalPrice total={total}/>
         </div>
       </div>
     </Fragment>
